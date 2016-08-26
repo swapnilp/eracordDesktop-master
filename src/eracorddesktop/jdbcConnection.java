@@ -15,8 +15,9 @@ import javax.json.JsonArrayBuilder;
  * @author lenovo
  */
 public class jdbcConnection {
+
     String dburl = "jdbc:mysql://localhost:3306/eracord?zeroDateTimeBehavior=convertToNull";
-   //String db = "jdbc:mysql://localhost:3306/eracord_development";
+    //String db = "jdbc:mysql://localhost:3306/eracord_development";
 
     void createStudents(int id, String f_name, String l_name, String m_name) {
         try {
@@ -40,6 +41,10 @@ public class jdbcConnection {
         } catch (Exception e) {
             System.out.println(e);
         }
+    }
+
+    void all_students() {
+
     }
 
     void create_last_fetch(int organisation_id) {
@@ -121,11 +126,26 @@ public class jdbcConnection {
                 System.out.println("STUDENT_ID: " + id + " DATE: " + date);
             }
         } catch (Exception e) {
-            System.err.println("ID and STUDENT ID ERROR"+e);
+            System.err.println("ID and STUDENT ID ERROR" + e);
             AdminDesk adObj = new AdminDesk();
             adObj.Logout();
         }
         return jr;
+    }
+
+    ResultSet filterStudent() {
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/eracord?zeroDateTimeBehavior=convertToNull", "root", "satish");
+            Statement stmt = conn.createStatement();
+            pstmt = conn.prepareStatement("select id, first_name, middle_name, last_name, id_card from students");
+            rs = pstmt.executeQuery();
+        } catch (Exception e) {
+            System.err.println(e);
+        } 
+        return rs;
     }
 
     public static void main(String args[]) {

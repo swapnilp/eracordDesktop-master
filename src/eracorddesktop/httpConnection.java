@@ -21,6 +21,7 @@ public class httpConnection {
 
     public httpConnection() throws Exception {
         serverURL = "http://192.168.0.100:3000";
+                
     }
 
     public JsonObject doPost(AdminDesk adObj ,String reqUrl, String formVal, String params) throws Exception {
