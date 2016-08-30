@@ -21,10 +21,10 @@ public class httpConnection {
 
     public httpConnection() throws Exception {
         serverURL = "http://192.168.0.100:3000";
-                
+        //serverURL = "http://eracord.com";        
     }
 
-    public JsonObject doPost(AdminDesk adObj ,String reqUrl, String formVal, String params) throws Exception {
+    public JsonObject doPost(AdminDesk adObj, String reqUrl, String formVal, String params) throws Exception {
         HttpURLConnection connection = null;
         URL url;
         JsonObject jsonobject = null;
@@ -78,7 +78,7 @@ public class httpConnection {
         URL url;
         JsonObject jsonobject = null;
         try {
-            url = new URL(serverURL +"/organisation/add_attendances");
+            url = new URL(serverURL + "/organisation/add_attendances");
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Authorization", token);
@@ -107,7 +107,7 @@ public class httpConnection {
             JsonReader jsonReader = Json.createReader(new StringReader(response.toString()));
             jsonobject = jsonReader.readObject();
             rd.close();
-           
+
         } catch (Exception e) {
             System.err.println("pushAttendance Error..." + e);
         } finally {

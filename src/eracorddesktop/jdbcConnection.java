@@ -19,7 +19,7 @@ public class jdbcConnection {
     String dburl = "jdbc:mysql://localhost:3306/eracord?zeroDateTimeBehavior=convertToNull";
     //String db = "jdbc:mysql://localhost:3306/eracord_development";
 
-    void createStudents(int id, String f_name, String l_name, String m_name) {
+    void createStudents(int id, String f_name, String l_name, String m_name, int organisation_id) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             try (Connection con = DriverManager.getConnection(dburl, "root", "satish")) {
@@ -32,7 +32,7 @@ public class jdbcConnection {
                     count++;
                 }
                 if (count == 0) {
-                    String query = "insert into students (id,first_name, last_name, middle_name) values(" + id + ",'" + f_name + "','" + l_name + "','" + m_name + "' );";
+                    String query = "insert into students (id,first_name, last_name, middle_name, organisation_id) values(" + id + ",'" + f_name + "','" + l_name + "','" + m_name + "','" + organisation_id+ "' );";
                     System.out.println(query);
                     stmt.executeUpdate(query);
                 }
@@ -79,6 +79,21 @@ public class jdbcConnection {
         }
 
         return date;
+    }
+    
+    void remove_other_org_students(String org_ids){
+        ResultSet rs = null;
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection con = DriverManager.getConnection(dburl, "root", "satish");
+            Statement stmt = con.createStatement();
+            String query = "delete from students where organisation_id not in ("+org_ids+") OR organisation_id is null;";
+            System.out.println(query);
+            stmt.executeUpdate(query);   
+            System.out.println("asdasdasd");
+        }catch(Exception e){
+            System.out.println(e);
+        }
     }
 
     void get_attendances() {
@@ -138,9 +153,9 @@ public class jdbcConnection {
         ResultSet rs = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/eracord?zeroDateTimeBehavior=convertToNull", "root", "satish");
+            Connection conn = DriverManager.getConnection(dburl, "root", "satish");
             Statement stmt = conn.createStatement();
-            pstmt = conn.prepareStatement("select id, first_name, middle_name, last_name, id_card from students");
+            pstmt = conn.prepareStatement("select id, first_name, middle_name, last_name, id_card, organisation_id from students");
             rs = pstmt.executeQuery();
         } catch (Exception e) {
             System.err.println(e);

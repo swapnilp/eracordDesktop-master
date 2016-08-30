@@ -3,6 +3,7 @@ package eracorddesktop;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.nio.Buffer;
 import java.sql.ResultSet;
 import java.util.Hashtable;
 import javax.json.*;
@@ -14,14 +15,16 @@ import javax.swing.table.TableRowSorter;
 import net.proteanit.sql.DbUtils;
 
 public class AdminDesk extends javax.swing.JFrame {
-
+    
     /**
      * Creates new form AdminDesk
      */
     String auth_token;
 
     public AdminDesk() {
+        TableRowSorter tableRowSorter;
         initComponents();
+        
         jDialog2.setVisible(false);
         jButton7.setVisible(false);
         jLabel8.setVisible(false);
@@ -35,10 +38,11 @@ public class AdminDesk extends javax.swing.JFrame {
 
         final Toolkit toolkit = Toolkit.getDefaultToolkit();
         final Dimension screenSize = toolkit.getScreenSize();
-         final int p = (screenSize.width - jDialog2.getWidth()) / 2;
+        final int p = (screenSize.width - jDialog2.getWidth()) / 2;
         final int q = (screenSize.height - jDialog2.getHeight()) / 2;
         jDialog2.setLocation(p, q);
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -159,6 +163,11 @@ public class AdminDesk extends javax.swing.JFrame {
         jDialog2.setAlwaysOnTop(true);
         jDialog2.setMinimumSize(new java.awt.Dimension(950, 980));
 
+        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField2ActionPerformed(evt);
+            }
+        });
         jTextField2.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 jTextField2KeyReleased(evt);
@@ -254,16 +263,16 @@ public class AdminDesk extends javax.swing.JFrame {
                         .addGap(34, 34, 34)
                         .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, Short.MAX_VALUE)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(31, 31, 31))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jLabel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
@@ -468,6 +477,11 @@ public class AdminDesk extends javax.swing.JFrame {
             JsonObject jsonObj = new httpConnection().doPost(this, "/organisations/sign_in", "{\"organisation\": " + new HashToString().getString(user) + "}", "");
             if (jsonObj.getBoolean("success")) {
                 jDialog1.setVisible(false);
+                String org_ids = jsonObj.getString("org_ids");
+
+                jdbcConnection jdbcObj = new jdbcConnection();
+                jdbcObj.remove_other_org_students(org_ids);
+
                 auth_token = jsonObj.getString("token");
                 this.hideLogin();
                 jdbcConnection conn = new jdbcConnection();
@@ -534,20 +548,23 @@ public class AdminDesk extends javax.swing.JFrame {
 
     private void jTextField2KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField2KeyReleased
         // TODO add your handling code here:
-        String query = jTextField2.getText();
+        String query = jTextField2.getText().toString();
         search(query);
-
+        
     }//GEN-LAST:event_jTextField2KeyReleased
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
 
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        int selectedRowIndex = jTable1.getSelectedRow();
+        int selectedRowIndex = jTable1.convertRowIndexToModel(jTable1.getSelectedRow());
+        
+              
         jLabel15.setText("");
         jLabel16.setText("");
         jLabel17.setText("");
         jLabel18.setText("");
         jLabel19.setText("");
+
         if ((model.getValueAt(selectedRowIndex, 0) != null)) {
             jLabel15.setText((String) model.getValueAt(selectedRowIndex, 0).toString());
         }
@@ -568,6 +585,10 @@ public class AdminDesk extends javax.swing.JFrame {
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton9ActionPerformed
+
+    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField2ActionPerformed
     /**
      * @param args the command line arguments
      */
@@ -577,6 +598,7 @@ public class AdminDesk extends javax.swing.JFrame {
         jTable1.setRowSorter(tr);
         tr.setRowFilter(RowFilter.regexFilter(query));
     }
+
     void display() {
         ResultSet rs = null;
         try {
@@ -586,6 +608,7 @@ public class AdminDesk extends javax.swing.JFrame {
             System.err.println(e);
         }
     }
+
     void hideLogin() {
         jButton1.setVisible(false);
         jLabel3.setText(jTextField1.getText());
@@ -595,11 +618,13 @@ public class AdminDesk extends javax.swing.JFrame {
         jButton6.setVisible(true);
         jLabel3.setVisible(true);
     }
+
     void Logout() {
         jPanel1.setVisible(false);
         jDialog1.setVisible(false);
         jButton1.setVisible(true);
     }
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
