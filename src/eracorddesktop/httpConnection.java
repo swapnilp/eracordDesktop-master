@@ -20,8 +20,8 @@ public class httpConnection {
     String serverURL;
 
     public httpConnection() throws Exception {
-        serverURL = "http://192.168.0.100:3000";
-        //serverURL = "http://eracord.com";        
+        //serverURL = "http://192.168.0.100:3000";
+        serverURL = "http://eracord.com";        
     }
 
     public JsonObject doPost(AdminDesk adObj, String reqUrl, String formVal, String params) throws Exception {
