@@ -6,9 +6,13 @@
 package eracorddesktop;
 
 import java.sql.*;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
+import java.util.Date;
+import javax.management.Query;
 
 /**
  *
@@ -32,7 +36,7 @@ public class jdbcConnection {
                     count++;
                 }
                 if (count == 0) {
-                    String query = "insert into students (id,first_name, last_name, middle_name, organisation_id) values(" + id + ",'" + f_name + "','" + l_name + "','" + m_name + "','" + organisation_id+ "' );";
+                    String query = "insert into students (id,first_name, last_name, middle_name, organisation_id) values(" + id + ",'" + f_name + "','" + l_name + "','" + m_name + "','" + organisation_id + "' );";
                     System.out.println(query);
                     stmt.executeUpdate(query);
                 }
@@ -80,22 +84,59 @@ public class jdbcConnection {
 
         return date;
     }
-    
-    void remove_other_org_students(String org_ids){
+
+    void remove_other_org_students(String org_ids) {
         ResultSet rs = null;
-        try{
+        try {
             Class.forName("com.mysql.jdbc.Driver");
             Connection con = DriverManager.getConnection(dburl, "root", "satish");
             Statement stmt = con.createStatement();
-            String query = "delete from students where organisation_id not in ("+org_ids+") OR organisation_id is null;";
+            String query = "delete from students where organisation_id not in (" + org_ids + ") OR organisation_id is null;";
             System.out.println(query);
-            stmt.executeUpdate(query);   
+            stmt.executeUpdate(query);
             System.out.println("asdasdasd");
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println(e);
         }
     }
 
+    int find_id_exits_or_not(String a) {
+        ResultSet rs = null;
+        int count = 0;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection con = DriverManager.getConnection(dburl, "root", "satish");
+            Statement stmt = con.createStatement();
+            String query = "select * from students where id =(" + a + ")";
+            rs = stmt.executeQuery(query);
+            if (rs.next()) { 
+                count++;
+            }           
+            
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return count;
+    }
+    void assign_id_card(String a){
+          try {
+                    System.out.println("insert attendances");
+                    Class.forName("com.mysql.jdbc.Driver");
+                    Connection con = DriverManager.getConnection(dburl, "root", "satish");
+                    Statement stmt = con.createStatement();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+                    Date date = new Date();
+                    String time = dateFormat.format(date);
+                    SimpleDateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
+                    Calendar cal = Calendar.getInstance();
+                    String date1 = dateFormat1.format(cal.getTime());
+                    String query = "insert into attendances (student_id, in_time, date) values (" + a + ", '" + time + "', '" + date1 + "')";
+                    stmt.executeUpdate(query);
+                    
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+    }
     void get_attendances() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -159,7 +200,7 @@ public class jdbcConnection {
             rs = pstmt.executeQuery();
         } catch (Exception e) {
             System.err.println(e);
-        } 
+        }
         return rs;
     }
 
